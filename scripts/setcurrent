@@ -1,0 +1,39 @@
+#!/bin/sh
+
+CONFIGDIR=`pwd`/config
+
+set_link()
+{
+	TARGET=$1
+	shift
+
+	if [ -z "$1" ] ; then
+		echo "$0: set_link: Expected FILE"
+	elif [ ! -r "$1" ] ; then
+		echo "$0: set_link: Expected $1 to exist"
+	else
+		FILE=$1
+		shift
+	fi
+
+	( cd ${CONFIGDIR} && ln -sf `echo $FILE | sed 's/.*config\///'` $TARGET )
+}
+
+ACTION=$1
+[ "$1" ] && shift
+case $ACTION in
+boot)	## set 'boot' configuration link
+	set_link boot.cfg $* || exit 1
+	;;
+utils)	## set 'utils' configuration link
+	set_link utils.cfg $* || exit 1
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'" 1>&2
+	fi
+	echo "$0: Usage:" 1>&2
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/" 1>&2
+	exit 1
+	;;
+esac

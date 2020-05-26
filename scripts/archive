@@ -1,0 +1,6 @@
+#!/bin/sh
+
+WHEN=`date +%y%m%d`
+
+tar cvzf wmfd-files-${WHEN}.tgz files
+tar cvzf wmfd-scripts-${WHEN}.tgz config scripts

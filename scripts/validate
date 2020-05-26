@@ -1,0 +1,45 @@
+#!/bin/sh
+
+HERE=`pwd`
+CONFIGDIR=${HERE}/config
+PKGTREE=${CONFIGDIR}/PACKAGE
+
+validate()
+{
+	LSTFILE=$1
+
+	grep -v '^#' $LSTFILE | while read LINE ; do
+		set -- $LINE
+		if [ "$1" ] ; then
+			FILEROOT=$1
+
+			CFGFILE=${PKGTREE}/`echo $FILEROOT | cut -c-1`/$FILEROOT.cfg
+			if [ ! -r ${CFGFILE} ] ; then
+				echo "$0: No CFGFILE ${CFGFILE}" 1>&2
+				exit 1
+			else
+				echo "$FILEROOT: "
+				grep URL ${CFGFILE} | sed 's/^/	/'
+			fi
+		fi
+	done || exit 1
+}
+
+ACTION=$1
+[ "$1" ] && shift
+case $ACTION in
+boot)	## validate 'boot'disk configuration
+	validate ${CONFIGDIR}/boot.cfg || exit 1
+	;;
+utils)	## validate 'utils'disk configuration
+	validate ${CONFIGDIR}/utils.cfg || exit 1
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'" 1>&2
+	fi
+	echo "$0: Usage:" 1>&2
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/" 1>&2
+	exit 1
+	;;
+esac

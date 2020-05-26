@@ -1,0 +1,196 @@
+#!/bin/sh
+
+HERE=`pwd`
+CONFIGDIR=${HERE}/config
+PKGTREE=${CONFIGDIR}/PACKAGE
+
+mksubdir()
+{
+	TREE=$1
+	FILE=$2
+
+	SUBDIR=''
+	TEMP=$2
+	while [ -z "$SUBDIR" ] ; do
+		case $TEMP in
+		?)	SUBDIR=$TEMP ;;
+		?*)	TEMP=`echo $TEMP | sed 's/.$//'` ;;
+		esac
+	done
+
+	echo ${TREE}/${SUBDIR}/${FILE}
+}
+
+install_archive()
+{
+	DUMMY=$1
+	ARCHIVE=`mksubdir files $2`
+
+	if [ ! -r $ARCHIVE ] ; then
+		echo "$0: ARCHIVE ${ARCHIVE} not found"
+		exit 1
+	fi
+
+	if [ -r ${TMPDIR}/zip ] ; then
+		echo "$0: package config has ARCHIVE twice"
+		exit 1
+	else
+		mkdir ${TMPDIR}/zip
+	fi
+
+	case $ARCHIVE in
+	*.zip) unzip $ARCHIVE -d ${TMPDIR}/zip >/dev/null ;;
+	*.tgz) cat $ARCHIVE | ( cd ${TMPDIR}/zip && tar xzf - ) ;;
+	*)	exit 1 ;;
+	esac
+}
+
+install_file()
+{
+	DUMMY=$1
+	FILENAME=`mksubdir files $2`
+
+	if [ ! -r $FILENAME ] ; then
+		echo "$0: ${FILENAME} not found"
+		exit 1
+	fi
+
+	if [ -r ${TMPDIR}/zip ] ; then
+		echo "$0: package config has ARCHIVE twice"
+		exit 1
+	else
+		mkdir ${TMPDIR}/zip
+	fi
+
+	cp $FILENAME ${TMPDIR}/zip
+}
+
+
+install_subzip()
+{
+	DUMMY=$1
+	ARCHIVE=${TMPDIR}/zip/$2
+
+	if [ ! -r $ARCHIVE ] ; then
+		echo "$0: ARCHIVE ${ARCHIVE} not found"
+		exit 1
+	fi
+
+	unzip $ARCHIVE -d ${TMPDIR}/zip >/dev/null
+}
+
+install_install()
+{
+	IIDUMMY=$1
+	IISOURCE=$2
+	IITARGET=$3
+
+	if [ ! -d ${TMPDIR}/zip ] ; then
+		echo "$0: package config missing ARCHIVE"
+		false
+	elif [ -z "$TARGET" ] ; then
+		echo "$0: bad TARGET"
+		false
+	else
+		SUBDIR=`dirname ${ROOTDIR}/${IITARGET}`
+		mkdir -p ${SUBDIR}
+		cp ${TMPDIR}/zip/${IISOURCE} ${ROOTDIR}/${IITARGET}
+	fi
+}
+
+do_install()
+{
+	PKGCFG=$1
+	PACKAGE=$2
+	TARGET=$3
+	echo -n "[ ${PACKAGE} ]..."
+
+	FAILED=n
+	if [ ! -r ${PKGCFG} ] ; then
+		echo " config not found"
+		FAILED=y
+	else
+		[ -L ${TMPDIR}/zip ] && rm -f ${TMPDIR}/zip
+		[ -r ${TMPDIR}/zip ] && rm -rf ${TMPDIR}/zip
+		cat ${PKGCFG} | while read CONF ; do
+			[ "$CONF" ] && case $CONF in
+			\#*)	;;	## comment - ignore
+			ARCHIVE\ *) install_archive $CONF || FAILED=y ;;
+			SUBZIP\ *) install_subzip $CONF || FAILED=y ;;
+			FILE\ *) install_file $CONF || FAILED=y ;;
+			INSTALL\ *) echo -n "." ; ROOTDIR=${TMPDIR}/files/${TARGET} install_install $CONF || FAILED=y ;;
+			*)	echo "CONF '$CONF'??!" ; exit 1 ;;
+			esac
+			[ $FAILED = 'n' ]
+		done || FAILED=y
+		echo
+	fi
+	[ $FAILED = 'n' ] && true
+}
+
+make_content()
+{
+	# arg parsing
+	LSTFILE=$1
+	TARFILE=$2
+
+	# temp directory
+	[ "$TMPDIR" ] || TMPDIR=tmp.$$
+	if [ ! -d $TMPDIR ] ; then
+		mkdir -p $TMPDIR || exit 1
+		mkdir ${TMPDIR}/files
+	else
+		HADTMP=y
+		if [ -d ${TMPDIR}/files ] ; then
+			rm -rf ${TMPDIR}/files/* 2>/dev/null
+		fi
+	fi
+
+	# deal with listfile content
+	FAILED=n
+	grep -v '^#' $LSTFILE | while read SPEC ; do
+		set -- $SPEC
+		if [ "$1" ] ; then
+			FILEROOT=$1
+
+			CFGFILE=${PKGTREE}/`echo $FILEROOT | cut -c-1`/$FILEROOT.cfg
+			if [ ! -r ${CFGFILE} ] ; then
+				echo "$0: No CFGFILE ${CFGFILE}" 1>&2
+				exit 1
+			else
+				( do_install ${CFGFILE} ${SPEC} ) || FAILED=y
+			fi
+		fi
+		[ $FAILED = 'n' ]
+	done || FAILED=y
+
+	if [ $FAILED = 'y' ] ; then
+		echo "$0: aborting - there were errors"
+	else
+		echo -n "$0: Generating $TARFILE... "
+		( cd ${TMPDIR}/files && tar cvf - * 2>../files.lst ) | gzip -9 > $TARFILE
+		echo `grep -v "/$" ${TMPDIR}/files.lst | wc -l` files, `cat $TARFILE | wc -c` bytes
+	fi
+
+	[ "$HADTMP" = 'y' ] || rm -rf $TMPDIR
+	[ $FAILED = 'n' ] && true
+}
+
+ACTION=$1
+[ "$1" ] && shift
+case $ACTION in
+boot)	## build 'boot'disk content
+	make_content ${CONFIGDIR}/boot.cfg boot.tgz || exit 1
+	;;
+utils)	## build 'utils'disk content
+	make_content ${CONFIGDIR}/utils.cfg utils.tgz || exit 1
+	;;
+*)
+	if [ -n "$COMMAND" -a "$COMMAND" != 'help' ] ; then
+		echo "$0: Unrecognised command '$COMMAND'" 1>&2
+	fi
+	echo "$0: Usage:" 1>&2
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/" 1>&2
+	exit 1
+	;;
+esac

@@ -16,3 +16,18 @@ download-toolchain-unzip:
 .PHONY: verify-toolchain-unzip
 verify-toolchain-unzip: download-toolchain-unzip
 	make download-verify FILE=${UNZIP_TARBALL} EXPECTED_CHECKSUM=62b490407489521db863b523a7f86375
+
+.PHONY: install-toolchain-unzip
+install-toolchain-unzip: verify-toolchain-unzip
+	[ -r ${TOOLCHAIN_DIR}/bin/unzip ] || { \
+		mkdir -p ${STAGING_DIR}/temp && \
+		cd ${STAGING_DIR}/temp && tar xvzf ${UNZIP_TARBALL} && \
+		cd ${STAGING_DIR}/temp/unzip60 && \
+		mv unix/Makefile unix/Makefile.OLD && \
+		cat unix/Makefile.OLD \
+			| sed "/^prefix =/	s%/usr/local%${TOOLCHAIN_DIR}%" \
+			> unix/Makefile && \
+		make -f unix/Makefile linux_noasm && \
+		make -f unix/Makefile install && \
+		cd ${STAGING_DIR} && rm -rf ./temp ;\
+	}

@@ -17,3 +17,16 @@ download-toolchain-mtools:
 .PHONY: verify-toolchain-mtools
 verify-toolchain-mtools: download-toolchain-mtools
 	make download-verify FILE=${MTOOLS_TARBALL} EXPECTED_CHECKSUM=1bc100883e42462d5c10d93b489f4323
+
+.PHONY: install-toolchain-mtools
+install-toolchain-mtools:
+	make download-file DOWNLOAD_URL=${MTOOLS_URL} DOWNLOAD_OUTFILE=${MTOOLS_TARBALL}
+	[ -r ${TOOLCHAIN_DIR}/bin/mformat ] || { \
+		mkdir -p ${STAGING_DIR}/temp && \
+		cd ${STAGING_DIR}/temp && tar xvzf ${MTOOLS_TARBALL} && \
+		cd ${STAGING_DIR}/temp/mtools-${MTOOLS_VERSION} && \
+		./configure --prefix=${TOOLCHAIN_DIR} && \
+		make && \
+		make install && \
+		cd ${STAGING_DIR} && rm -rf ./temp ;\
+	}

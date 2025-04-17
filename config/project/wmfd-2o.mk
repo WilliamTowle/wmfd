@@ -11,6 +11,12 @@ include ${CONFIG_DIR}/staging/wmfd-2o.mk
 .PHONY: prepare
 prepare: download-prepare toolchain-prepare staging-prepare
 
+.PHONY: download-all
+download-all: download-toolchain-all download-staging-all
+
+.PHONY: verify-all
+verify-all: verify-toolchain-all verify-staging-all
+
 .PHONY: deploy-media
 deploy-media: build-staging | ${STAGING_DIR}
 

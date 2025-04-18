@@ -28,3 +28,9 @@ endif
 
 .PHONY: build-staging
 build-staging: download-prepare staging-prepare build-toolchain | ${DOWNLOAD_DIR} ${STAGING_DIR}
+ifneq (${KERNEL_VERSION},)
+	make install-staging-kernel
+endif
+ifneq (${COMMAND_VERSION},)
+	make install-staging-command
+endif

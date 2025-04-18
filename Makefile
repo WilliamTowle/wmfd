@@ -13,6 +13,10 @@ PROJECT_CONFIG=
 
 include ${PROJECT_CONFIG}
 
+ifneq (${TOOLCHAIN_DIR},)
+export PATH:=${TOOLCHAIN_DIR}/bin:${PATH}
+endif
+
 
 ## Rules
 

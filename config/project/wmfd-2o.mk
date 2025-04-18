@@ -19,6 +19,9 @@ verify-all: verify-toolchain-all verify-staging-all
 
 .PHONY: deploy-media
 deploy-media: build-staging | ${STAGING_DIR}
+	mformat -C -f 1440 -i ${STAGING_DIR}/x1440a.img ::
+	sys-freedos.pl --disk=${STAGING_DIR}/x1440a.img --offset=0 --drive=0
+	mcopy -i ${STAGING_DIR}/x1440a.img ${STAGING_DIR}/rootfs/* ::
 
 .PHONY: clean
 clean: toolchain-clean staging-clean

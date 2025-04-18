@@ -41,3 +41,15 @@ endif
 
 .PHONY: build-toolchain
 build-toolchain: config-sanity download-prepare toolchain-prepare
+ifneq (${MTOOLS_VERSION},)
+	make install-toolchain-mtools
+endif
+ifneq (${NASM_VERSION},)
+	make install-toolchain-nasm
+endif
+ifneq (${SYS_FREEDOS_VERSION},)
+	make install-toolchain-sys-freedos
+endif
+ifneq (${UNZIP_VERSION},)
+	make install-toolchain-unzip
+endif

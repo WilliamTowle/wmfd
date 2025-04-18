@@ -1,0 +1,14 @@
+wmfd-de
+=======
+
+Overview
+--------
+
+  'wmfd-de' builds a toolchain suitable for generating custom boot
+floppy images for FreeDOS.
+
+  The build system is intended to be flexible, with a project-level
+configuration specifying both toolchain and image content.
+
+  To build a simple demonstration floppy image, run:
+	make PROJECT_CONFIG=config/project/wmfd-2o.mk deploy-media

@@ -6,50 +6,18 @@ include ${CONFIG_DIR}/package/nasm.mk
 include ${CONFIG_DIR}/package/sys-freedos.mk
 include ${CONFIG_DIR}/package/unzip.mk
 
+TOOLCHAIN_PACKAGES=mtools nasm sys-freedos unzip
 
 ## Rules
 
 .PHONY: download-toolchain-all
-download-toolchain-all: download-prepare
-ifneq (${MTOOLS_VERSION},)
-	make download-toolchain-mtools
-endif
-ifneq (${NASM_VERSION},)
-	make download-toolchain-nasm
-endif
-ifneq (${SYS_FREEDOS_VERSION},)
-	make download-toolchain-sys-freedos
-endif
-ifneq (${UNZIP_VERSION},)
-	make download-toolchain-unzip
-endif
+download-toolchain-all: download-prepare \
+	$(patsubst %,download-toolchain-%,${TOOLCHAIN_PACKAGES})
 
 .PHONY: verify-toolchain-all
-verify-toolchain-all: download-toolchain-all
-ifneq (${MTOOLS_VERSION},)
-	make verify-toolchain-mtools
-endif
-ifneq (${NASM_VERSION},)
-	make verify-toolchain-nasm
-endif
-ifneq (${SYS_FREEDOS_VERSION},)
-	make verify-toolchain-sys-freedos
-endif
-ifneq (${UNZIP_VERSION},)
-	make verify-toolchain-unzip
-endif
+verify-toolchain-all: download-toolchain-all \
+	$(patsubst %,verify-toolchain-%,${TOOLCHAIN_PACKAGES})
 
 .PHONY: build-toolchain
-build-toolchain: config-sanity download-prepare toolchain-prepare
-ifneq (${MTOOLS_VERSION},)
-	make install-toolchain-mtools
-endif
-ifneq (${NASM_VERSION},)
-	make install-toolchain-nasm
-endif
-ifneq (${SYS_FREEDOS_VERSION},)
-	make install-toolchain-sys-freedos
-endif
-ifneq (${UNZIP_VERSION},)
-	make install-toolchain-unzip
-endif
+build-toolchain: config-sanity download-prepare toolchain-prepare \
+	$(patsubst %,install-toolchain-%,${TOOLCHAIN_PACKAGES})

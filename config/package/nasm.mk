@@ -21,8 +21,7 @@ verify-toolchain-nasm: download-toolchain-nasm
 	make download-verify FILE=${NASM_TARBALL} EXPECTED_CHECKSUM=d755ba0d16f94616c2907f8cab7c748b
 
 .PHONY: install-toolchain-nasm
-install-toolchain-nasm:
-	make download-file DOWNLOAD_URL=${NASM_URL} DOWNLOAD_OUTFILE=${NASM_TARBALL}
+install-toolchain-nasm: verify-toolchain-nasm
 	[ -r ${TOOLCHAIN_DIR}/bin/nasm ] || { \
 		mkdir -p ${STAGING_DIR}/temp && \
 		case ${NASM_TARBALL} in \

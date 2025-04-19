@@ -18,8 +18,7 @@ verify-toolchain-unzip: download-toolchain-unzip
 	make download-verify FILE=${UNZIP_TARBALL} EXPECTED_CHECKSUM=62b490407489521db863b523a7f86375
 
 .PHONY: install-toolchain-unzip
-install-toolchain-unzip:
-	make download-file DOWNLOAD_URL=${UNZIP_URL} DOWNLOAD_OUTFILE=${UNZIP_TARBALL}
+install-toolchain-unzip: verify-toolchain-unzip
 	[ -r ${TOOLCHAIN_DIR}/bin/unzip ] || { \
 		mkdir -p ${STAGING_DIR}/temp && \
 		cd ${STAGING_DIR}/temp && tar xvzf ${UNZIP_TARBALL} && \

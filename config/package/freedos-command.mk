@@ -16,8 +16,7 @@ verify-staging-command: download-staging-command
 	make download-verify FILE=${COMMAND_ZIPFILE} EXPECTED_CHECKSUM=0e2e501d1f9d8ffa9bdbbd08b019f2a4
 
 .PHONY: install-staging-command
-install-staging-command:
-	make download-file DOWNLOAD_URL=${COMMAND_URL} DOWNLOAD_OUTFILE=${COMMAND_ZIPFILE}
+install-staging-command: verify-staging-command
 	[ -r ${STAGING_DIR}/rootfs/command.com ] || { \
 		mkdir -p ${STAGING_DIR}/temp && \
 		cd ${STAGING_DIR}/temp && \

@@ -2,8 +2,8 @@
 
 include ${CONFIG_DIR}/staging.mk
 
-include ${CONFIG_DIR}/package/freedos-kernel.mk
-include ${CONFIG_DIR}/package/freecom.mk
+include ${CONFIG_DIR}/package/freedos-kernel/v2.0.35.mk
+include ${CONFIG_DIR}/package/freecom/v0.82pl3.mk
 
 STAGING_PACKAGES=kernel freecom
 

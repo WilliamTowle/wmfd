@@ -1,4 +1,4 @@
-## wmfd-de toolchain tree configuration - wmfd-simple
+## wmfd-de toolchain tree configuration - freedos-sys-freedos.mk
 
 include ${CONFIG_DIR}/toolchain.mk
 include ${CONFIG_DIR}/package/mtools.mk

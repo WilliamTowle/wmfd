@@ -1,10 +1,11 @@
 ## wmfd-de toolchain tree configuration - freedos-sys-freedos.mk
 
 include ${CONFIG_DIR}/toolchain.mk
-include ${CONFIG_DIR}/package/mtools.mk
-include ${CONFIG_DIR}/package/nasm.mk
-include ${CONFIG_DIR}/package/sys-freedos.mk
-include ${CONFIG_DIR}/package/unzip.mk
+
+include ${CONFIG_DIR}/package/mtools/v4.0.48.mk
+include ${CONFIG_DIR}/package/nasm/v2.16.01.mk
+include ${CONFIG_DIR}/package/sys-freedos/v1.1.mk
+include ${CONFIG_DIR}/package/unzip/v6.0.mk
 
 TOOLCHAIN_PACKAGES=mtools nasm sys-freedos unzip
 

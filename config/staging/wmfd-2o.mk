@@ -3,9 +3,9 @@
 include ${CONFIG_DIR}/staging.mk
 
 include ${CONFIG_DIR}/package/freedos-kernel.mk
-include ${CONFIG_DIR}/package/freedos-command.mk
+include ${CONFIG_DIR}/package/freecom.mk
 
-STAGING_PACKAGES=kernel command
+STAGING_PACKAGES=kernel freecom
 
 ## Rules
 

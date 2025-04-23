@@ -2,7 +2,7 @@
 
 include ${CONFIG_DIR}/download.mk
 
-include ${CONFIG_DIR}/toolchain/wmfd-simple.mk
+include ${CONFIG_DIR}/toolchain/freedos-sys-freedos.mk
 include ${CONFIG_DIR}/staging/wmfd-2o.mk
 
 

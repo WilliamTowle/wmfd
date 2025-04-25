@@ -10,5 +10,8 @@ floppy images for FreeDOS.
   The build system is intended to be flexible, with a project-level
 configuration specifying both toolchain and image content.
 
+  As source for utilities in the toolchain is downloaded and built
+on demand, wget and build-essential are required dependencies.
+
   To build a simple demonstration floppy image, run:
 	make PROJECT_CONFIG=config/project/wmfd-2o.mk deploy-media

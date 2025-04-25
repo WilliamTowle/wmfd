@@ -23,7 +23,8 @@ verify-toolchain-sys-freedos: download-toolchain-sys-freedos
 	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-verify FILE=${SYS_FREEDOS_TARBALL} EXPECTED_CHECKSUM=13477740ce349e10c1753b113be41b94
 
 .PHONY: install-toolchain-sys-freedos
-install-toolchain-sys-freedos: verify-toolchain-sys-freedos install-toolchain-nasm
+install-toolchain-sys-freedos: verify-toolchain-sys-freedos \
+	install-toolchain-unzip install-toolchain-nasm
 	[ -r ${TOOLCHAIN_DIR}/bin/sys-freedos.pl ] || { \
 		mkdir -p ${STAGING_DIR}/temp && \
 		cd ${STAGING_DIR}/temp && unzip ${SYS_FREEDOS_TARBALL} && \

@@ -23,7 +23,8 @@ verify-staging-freecom: download-staging-freecom
 	esac
 
 .PHONY: install-staging-freecom
-install-staging-freecom: verify-staging-freecom
+install-staging-freecom: verify-staging-freecom \
+	install-toolchain-unzip
 	[ -r ${STAGING_DIR}/rootfs/command.com ] || { \
 		mkdir -p ${STAGING_DIR}/temp && \
 		cd ${STAGING_DIR}/temp && \

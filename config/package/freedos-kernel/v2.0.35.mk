@@ -16,7 +16,8 @@ verify-staging-kernel: download-staging-kernel
 	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-verify FILE=${KERNEL_ZIPFILE} EXPECTED_CHECKSUM=4a03a49f8373b165256f6c85cc3b82df
 
 .PHONY: install-staging-kernel
-install-staging-kernel: verify-staging-kernel
+install-staging-kernel: verify-staging-kernel \
+	install-toolchain-unzip
 	mkdir -p ${STAGING_DIR}/rootfs
 	[ -r ${STAGING_DIR}/rootfs/kernel.sys ] || { \
 		mkdir -p ${STAGING_DIR}/temp && \

@@ -11,7 +11,15 @@ include ${CONFIG_DIR}/toolchain/freedos-sys-freedos.mk
 endif
 include ${CONFIG_DIR}/staging/wmfd-2o.mk
 
+
 MEDIA_FILENAME=wmfd-2o.img
+MEDIA_OUTFILE=${STAGING_DIR}/${MEDIA_FILENAME}
+
+ifneq (${TOOLCHAIN_WITH_SYSLINUX},n)
+include ${CONFIG_DIR}/media/floppy-syslinux.mk
+else
+include ${CONFIG_DIR}/media/floppy-sys-freedos.mk
+endif
 
 
 ## Rules
@@ -25,17 +33,22 @@ download-all: download-toolchain-all download-staging-all
 .PHONY: verify-all
 verify-all: verify-toolchain-all verify-staging-all
 
+##
+
 .PHONY: deploy-media
-deploy-media: build-staging | ${STAGING_DIR}
-	mformat -C -f 1440 -i ${STAGING_DIR}/${MEDIA_FILENAME} ::
-ifneq (${TOOLCHAIN_WITH_SYSLINUX},n)
-	( mkdir -p ${STAGING_DIR}/rootfs/boot/syslinux && printf '%s\n' 'prompt 1' 'timeout 120' 'default dos' '' 'label dos' '    COM32 /boot/syslinux/chain.c32' '    APPEND freedos=/kernel.sys' > ${STAGING_DIR}/rootfs/boot/syslinux/syslinux.cfg )
-	sudo sh -c "PATH=${PATH} syslinux --install ${STAGING_DIR}/${MEDIA_FILENAME}"
-	mmd -i ${STAGING_DIR}/${MEDIA_FILENAME} ::/boot ::/boot/syslinux && mcopy -i ${STAGING_DIR}/${MEDIA_FILENAME} ${TOOLCHAIN_DIR}/lib/syslinux/chain.c32 ${STAGING_DIR}/rootfs/boot/syslinux/syslinux.cfg ::/boot/syslinux/
-else
-	sys-freedos.pl --disk=${STAGING_DIR}/${MEDIA_FILENAME} --offset=0 --drive=0
-endif
-	mcopy -i ${STAGING_DIR}/${MEDIA_FILENAME} ${STAGING_DIR}/rootfs/*.* ::
+
+.PHONY: deploy-media-prepare
+deploy-media-prepare: build-toolchain prepare-media-floppy
+
+.PHONY: deploy-media-install
+deploy-media-install: deploy-media-prepare build-staging
+	mcopy -i ${MEDIA_OUTFILE} ${STAGING_DIR}/rootfs/*.* ::
+
+
+deploy-media: deploy-media-prepare deploy-media-install
+
+
+##
 
 .PHONY: clean
 clean: toolchain-clean staging-clean

@@ -14,11 +14,11 @@ NASM_URL=https://snapshot.debian.org/archive/debian/20221231T090612Z/pool/main/n
 
 .PHONY: download-toolchain-nasm
 download-toolchain-nasm:
-	make download-file DOWNLOAD_URL=${NASM_URL} DOWNLOAD_OUTFILE=${NASM_TARBALL}
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-file DOWNLOAD_URL=${NASM_URL} DOWNLOAD_OUTFILE=${NASM_TARBALL}
 
 .PHONY: verify-toolchain-nasm
 verify-toolchain-nasm: download-toolchain-nasm
-	make download-verify FILE=${NASM_TARBALL} EXPECTED_CHECKSUM=d755ba0d16f94616c2907f8cab7c748b
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-verify FILE=${NASM_TARBALL} EXPECTED_CHECKSUM=d755ba0d16f94616c2907f8cab7c748b
 
 .PHONY: install-toolchain-nasm
 install-toolchain-nasm: verify-toolchain-nasm

@@ -16,11 +16,11 @@ SYS_FREEDOS_URL=http://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/dos/kern
 
 .PHONY: download-toolchain-sys-freedos
 download-toolchain-sys-freedos:
-	make download-file DOWNLOAD_URL=${SYS_FREEDOS_URL} DOWNLOAD_OUTFILE=${SYS_FREEDOS_TARBALL}
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-file DOWNLOAD_URL=${SYS_FREEDOS_URL} DOWNLOAD_OUTFILE=${SYS_FREEDOS_TARBALL}
 
 .PHONY: verify-toolchain-sys-freedos
 verify-toolchain-sys-freedos: download-toolchain-sys-freedos
-	make download-verify FILE=${SYS_FREEDOS_TARBALL} EXPECTED_CHECKSUM=13477740ce349e10c1753b113be41b94
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-verify FILE=${SYS_FREEDOS_TARBALL} EXPECTED_CHECKSUM=13477740ce349e10c1753b113be41b94
 
 .PHONY: install-toolchain-sys-freedos
 install-toolchain-sys-freedos: verify-toolchain-sys-freedos install-toolchain-nasm

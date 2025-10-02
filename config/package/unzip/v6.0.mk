@@ -11,11 +11,11 @@ UNZIP_URL=https://downloads.sourceforge.net/infozip/$(notdir ${UNZIP_TARBALL})
 
 .PHONY: download-toolchain-unzip
 download-toolchain-unzip:
-	make download-file DOWNLOAD_URL=${UNZIP_URL} DOWNLOAD_OUTFILE=${UNZIP_TARBALL}
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-file DOWNLOAD_URL=${UNZIP_URL} DOWNLOAD_OUTFILE=${UNZIP_TARBALL}
 
 .PHONY: verify-toolchain-unzip
 verify-toolchain-unzip: download-toolchain-unzip
-	make download-verify FILE=${UNZIP_TARBALL} EXPECTED_CHECKSUM=62b490407489521db863b523a7f86375
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-verify FILE=${UNZIP_TARBALL} EXPECTED_CHECKSUM=62b490407489521db863b523a7f86375
 
 .PHONY: install-toolchain-unzip
 install-toolchain-unzip: verify-toolchain-unzip

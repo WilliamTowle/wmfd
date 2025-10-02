@@ -12,11 +12,11 @@ MTOOLS_URL=http://ftp.gnu.org/gnu/mtools/$(notdir ${MTOOLS_TARBALL})
 
 .PHONY: download-toolchain-mtools
 download-toolchain-mtools:
-	make download-file DOWNLOAD_URL=${MTOOLS_URL} DOWNLOAD_OUTFILE=${MTOOLS_TARBALL}
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-file DOWNLOAD_URL=${MTOOLS_URL} DOWNLOAD_OUTFILE=${MTOOLS_TARBALL}
 
 .PHONY: verify-toolchain-mtools
 verify-toolchain-mtools: download-toolchain-mtools
-	make download-verify FILE=${MTOOLS_TARBALL} EXPECTED_CHECKSUM=1bc100883e42462d5c10d93b489f4323
+	${MAKE} -f $(firstword $(MAKEFILE_LIST)) download-verify FILE=${MTOOLS_TARBALL} EXPECTED_CHECKSUM=1bc100883e42462d5c10d93b489f4323
 
 .PHONY: install-toolchain-mtools
 install-toolchain-mtools: verify-toolchain-mtools

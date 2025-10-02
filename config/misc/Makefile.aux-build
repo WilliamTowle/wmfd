@@ -1,0 +1,18 @@
+#!/usr/bin/make
+
+.PHONY: default
+default:
+	@printf '%s: %s\n' $(firstword ${MAKEFILE_LIST}) "$@: No default action" 1>&2
+
+
+TOPLEV?=${CURDIR}
+CONFIG_DIR?=${TOPLEV}/config
+
+## Configuration
+
+include ${CONFIG_DIR}/download.mk
+
+include ${CONFIG_DIR}/toolchain.mk
+include ${CONFIG_DIR}/staging.mk
+
+include ${PACKAGE_INCLUDE}

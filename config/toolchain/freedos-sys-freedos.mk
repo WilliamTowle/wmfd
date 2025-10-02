@@ -22,3 +22,5 @@ verify-toolchain-all: download-toolchain-all \
 .PHONY: build-toolchain
 build-toolchain: config-sanity download-prepare toolchain-prepare \
 	$(patsubst %,install-toolchain-%,${TOOLCHAIN_PACKAGES})
+
+all: build-toolchain

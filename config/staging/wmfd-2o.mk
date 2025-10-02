@@ -21,3 +21,5 @@ verify-staging-all: download-staging-all \
 build-staging: download-prepare staging-prepare build-toolchain \
 	$(patsubst %,install-staging-%,${STAGING_PACKAGES}) \
 	| ${DOWNLOAD_DIR} ${STAGING_DIR}
+
+all: build-staging
